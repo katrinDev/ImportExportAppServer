@@ -26,9 +26,6 @@ public class ClientHandler implements Runnable{
     private ObjectInputStream in;
     private ObjectOutputStream out;
 
-    private UserService userService;
-    private PersonService personService;
-
     public ClientHandler(Socket clientSocket) {
         try{response = new Response();
             request = new Request();
@@ -43,6 +40,8 @@ public class ClientHandler implements Runnable{
 
     @Override
     public void run(){
+        UserService userService;
+        PersonService personService;
         try{
             while (clientSocket.isConnected()) {
                 String message = String.valueOf(in.readObject());
@@ -76,7 +75,7 @@ public class ClientHandler implements Runnable{
                             if(userService.findAllEntities().stream().noneMatch(x -> x.getLogin().equals(registerUser.getLogin()))){
                                 Person person = personService.findAllEntities().stream().filter(x -> x.getSurname().equals(registerUser.getPerson().getSurname()) && x.getName().equals(registerUser.getPerson().getName())).collect(Collectors.toList()).get(0);
                                 registerUser.setPerson(person);
-                                Role employeeRole = new Role(1, "employee");
+                                Role employeeRole = new Role(2, "employee");
                                 registerUser.setRole(employeeRole);
 
                                 userService.saveEntity(registerUser);
@@ -95,22 +94,34 @@ public class ClientHandler implements Runnable{
                     }
                 }
             }
-        } catch(ClassNotFoundException | NullPointerException | IOException e ){
-            if(this.clientSocket.isClosed()){
-                System.out.println("\nКлиент" + clientSocket.getInetAddress() + ":" + clientSocket.getPort() + " завершил работу");
-                Main.getCurrentSockets().remove(clientSocket);
-                System.out.println("Количество действующих подключений: " + (long) Main.getCurrentSockets().size());
-            } else {
-                e.getStackTrace();
+        } catch(ClassNotFoundException | IOException e){
+            closeEverything();
+            removeClient(clientSocket);
+        } catch(NullPointerException e){
+            System.out.println("");
+        }
+    }
+
+    public void closeEverything() {
+        try{
+            if(in != null){
+                in.close();
             }
+            if(out != null){
+                out.close();
+            }
+            if(clientSocket != null){
+                clientSocket.close();
+            }
+        } catch(IOException e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 
     private void removeClient(Socket clientSocket){
-        if(clientSocket.isClosed()){
-            System.out.println("\nКлиент" + clientSocket.getInetAddress() + ":" + clientSocket.getPort() + " завершил работу");
-            Main.getCurrentSockets().remove(clientSocket);
-            System.out.println("Количество действующих подключений: " + (long) Main.getCurrentSockets().size());
-        }
+        System.out.println("\nКлиент" + clientSocket.getInetAddress() + ":" + clientSocket.getPort() + " завершил работу");
+        Main.getCurrentSockets().remove(clientSocket);
+        System.out.println("Количество действующих подключений: " + (long) Main.getCurrentSockets().size());
     }
 }
