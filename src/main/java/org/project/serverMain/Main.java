@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
-    private static final int PORT = 3333;
+    private static final int PORT = 3334;
     private static ServerSocket serverSocket;
     private static ClientHandler clientHandler;
     private static Thread thread;

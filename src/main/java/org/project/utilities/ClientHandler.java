@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -31,6 +32,7 @@ public class ClientHandler implements Runnable{
             request = new Request();
             this.clientSocket = clientSocket;
             gson = new Gson();
+
             in = new ObjectInputStream(clientSocket.getInputStream());
             out = new ObjectOutputStream(clientSocket.getOutputStream());
         } catch(IOException e){
@@ -40,10 +42,11 @@ public class ClientHandler implements Runnable{
 
     @Override
     public void run(){
-        UserService userService;
-        PersonService personService;
+        UserService userService = new UserService();
+        PersonService personService = new PersonService();
         try{
             while (clientSocket.isConnected()) {
+
                 String message = String.valueOf(in.readObject());
                 request = gson.fromJson(message, Request.class);
                 System.out.println(message);
@@ -52,7 +55,6 @@ public class ClientHandler implements Runnable{
                     case LOGIN: {
                         User requestUser = gson.fromJson(request.getRequestMessage(), User.class);
                         System.out.println(requestUser);
-                        userService = new UserService();
                         if(userService.findAllEntities().stream().anyMatch(x -> x.getLogin().equals(requestUser.getLogin())) && userService.findAllEntities().stream().anyMatch(x -> x.getPassword().equals(requestUser.getPassword()))){
                             User user = userService.findAllEntities().stream().filter(x -> Objects.equals(x.getLogin(), requestUser.getLogin())).collect(Collectors.toList()).get(0);
 
@@ -62,6 +64,7 @@ public class ClientHandler implements Runnable{
                             response = new Response(ResponseStatus.ERROR, "Неправильный логин или пароль!", "");
                         }
                         out.writeObject(new Gson().toJson(response));
+                        out.flush();
                         System.out.println(response.getResponseMessage());
                         break;
                     }
@@ -71,7 +74,6 @@ public class ClientHandler implements Runnable{
 
                         personService = new PersonService();
                         if(personService.findAllEntities().stream().anyMatch(x -> x.getSurname().equals(registerUser.getPerson().getSurname())) && personService.findAllEntities().stream().anyMatch(x -> x.getName().equals(registerUser.getPerson().getName()))){
-                            userService = new UserService();
                             if(userService.findAllEntities().stream().noneMatch(x -> x.getLogin().equals(registerUser.getLogin()))){
                                 Person person = personService.findAllEntities().stream().filter(x -> x.getSurname().equals(registerUser.getPerson().getSurname()) && x.getName().equals(registerUser.getPerson().getName())).collect(Collectors.toList()).get(0);
                                 registerUser.setPerson(person);
@@ -88,17 +90,65 @@ public class ClientHandler implements Runnable{
                             response = new Response(ResponseStatus.ERROR, "Указанного сотрудника не существует!", "");
                         }
                         out.writeObject(new Gson().toJson(response));
+                        out.flush();
+
                         System.out.println(response.getResponseMessage());
 
                         break;
                     }
+                    case SHOWUSERS:{
+                        ArrayList<User> allUsers = (ArrayList<User>) userService.findAllEntities();
+                        if(allUsers != null){
+                            response = new Response(ResponseStatus.OK, "Список пользователей", new Gson().toJson(allUsers));
+                        } else{
+                            response = new Response(ResponseStatus.ERROR, "Список пользователей пуст!", "");
+                        }
+                        out.writeObject(new Gson().toJson(response));
+                        out.flush();
+
+                        System.out.println(response.getResponseMessage());
+                        break;
+                    }
+                    case CHANGEROLE:{
+                        User updateUser = gson.fromJson(request.getRequestMessage(), User.class);
+                        System.out.println(updateUser);
+                        User fullUser = userService.findEntity(updateUser.getUserId());
+
+                        if(fullUser.getRole().getRoleId() == 1){
+                            fullUser.setRole(new Role(2, "employee"));
+                        } else {
+                            fullUser.setRole(new Role(1, "admin"));
+                        }
+                        userService.updateEntity(fullUser);
+
+                        if(fullUser != null){
+                            response = new Response(ResponseStatus.OK, "Роль изменена", gson.toJson(fullUser));
+                        } else {
+                            response = new Response(ResponseStatus.OK, "Такого пользователя не существует", "");
+                        }
+                        out.writeObject(new Gson().toJson(response));
+                        out.flush();
+
+                        System.out.println(response.getResponseMessage());
+                        break;
+                    }
+                    case ADDUSER:{
+                        System.out.println("adduser");
+                        break;
+                    }
+                    case DELETEUSER:{
+                        System.out.println("delete user");
+                        break;
+                    }
+
                 }
             }
-        } catch(ClassNotFoundException | IOException e){
+        } catch(Exception e){
+            System.out.println(e.getMessage());
+            e.getStackTrace();
+        } finally{
             closeEverything();
             removeClient(clientSocket);
-        } catch(NullPointerException e){
-            System.out.println("");
         }
     }
 

@@ -1,7 +1,6 @@
 package org.project.entities;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
@@ -18,6 +17,14 @@ public class User  {
     @Column(name = "password", nullable = false, length = 45)
     private String password;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="roleID")
+    private Role role;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="personID")
+    private Person person;
+
     @Override
     public String toString() {
         return "User{" +
@@ -28,14 +35,6 @@ public class User  {
                 ", person=" + person +
                 '}';
     }
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="roleID")
-    private Role role;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="personID")
-    private Person person;
 
     public int getUserId() {
         return userId;
