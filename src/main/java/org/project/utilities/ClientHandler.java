@@ -63,9 +63,7 @@ public class ClientHandler implements Runnable{
                         } else {
                             response = new Response(ResponseStatus.ERROR, "Неправильный логин или пароль!", "");
                         }
-                        out.writeObject(new Gson().toJson(response));
-                        out.flush();
-                        System.out.println(response.getResponseMessage());
+
                         break;
                     }
                     case SIGNUP: {
@@ -89,10 +87,6 @@ public class ClientHandler implements Runnable{
                         } else{
                             response = new Response(ResponseStatus.ERROR, "Указанного сотрудника не существует!", "");
                         }
-                        out.writeObject(new Gson().toJson(response));
-                        out.flush();
-
-                        System.out.println(response.getResponseMessage());
 
                         break;
                     }
@@ -103,10 +97,7 @@ public class ClientHandler implements Runnable{
                         } else{
                             response = new Response(ResponseStatus.ERROR, "Список пользователей пуст!", "");
                         }
-                        out.writeObject(new Gson().toJson(response));
-                        out.flush();
 
-                        System.out.println(response.getResponseMessage());
                         break;
                     }
                     case CHANGEROLE:{
@@ -124,25 +115,35 @@ public class ClientHandler implements Runnable{
                         if(fullUser != null){
                             response = new Response(ResponseStatus.OK, "Роль изменена", gson.toJson(fullUser));
                         } else {
-                            response = new Response(ResponseStatus.OK, "Такого пользователя не существует", "");
+                            response = new Response(ResponseStatus.ERROR, "Такого аккаунта не существует", "");
                         }
-                        out.writeObject(new Gson().toJson(response));
-                        out.flush();
 
-                        System.out.println(response.getResponseMessage());
                         break;
                     }
-                    case ADDUSER:{
-                        System.out.println("adduser");
-                        break;
-                    }
+
                     case DELETEUSER:{
-                        System.out.println("delete user");
+                        User delUser = gson.fromJson(request.getRequestMessage(), User.class);
+                        System.out.println(delUser);
+
+                        User fullUser = userService.findEntity(delUser.getUserId());
+                        userService.deleteEntity(fullUser);
+
+                        if(fullUser != null){
+                            response = new Response(ResponseStatus.OK, "Аккаунт успешно удален", gson.toJson(fullUser));
+                        } else {
+                            response = new Response(ResponseStatus.ERROR, "Такого аккаунта не существует", "");
+                        }
+
                         break;
                     }
-
                 }
+
+                out.writeObject(new Gson().toJson(response));
+                out.flush();
+
+                System.out.println(response.getResponseMessage());
             }
+
         } catch(Exception e){
             System.out.println(e.getMessage());
             e.getStackTrace();
