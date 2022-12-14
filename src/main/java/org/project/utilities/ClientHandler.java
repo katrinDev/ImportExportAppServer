@@ -22,6 +22,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ClientHandler implements Runnable{
@@ -411,7 +412,7 @@ public class ClientHandler implements Runnable{
                     }
                     case SHOWMYPARTNERS:{
                         User user = new Gson().fromJson(request.getRequestMessage(), User.class);
-                        List<Company> companies = operationService.findAllEntities().stream().filter(x -> x.getUsers().contains(user)).collect(Collectors.toList()).stream().map(TradeOperation::getCompany).collect(Collectors.toList());
+                        Set<Company> companies = operationService.findAllEntities().stream().filter(x -> x.getUsers().contains(user)).collect(Collectors.toList()).stream().map(TradeOperation::getCompany).collect(Collectors.toSet());
                         for(Company i : companies){
                             System.out.println(i);
                         }
