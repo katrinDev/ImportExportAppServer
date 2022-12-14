@@ -108,7 +108,7 @@ public class DocumentReport {
             tableRow.getCell(0).setText(item.getCompany().getCompanyName());
             tableRow.getCell(1).setText(item.getFullCost().toString());
             tableRow.getCell(2).setText(item.getSupplyDate());
-            tableRow.getCell(3).setText(person.getSurname() + person.getName());
+            tableRow.getCell(3).setText(person.getSurname() + " " + person.getName());
             tableRow.getCell(4).setText(String.valueOf(itemsAmount));
 
             if(i == 5){

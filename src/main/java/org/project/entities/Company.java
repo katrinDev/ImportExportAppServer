@@ -24,8 +24,20 @@ public class Company {
     @Column(name = "companyEmail", nullable = true, length = 45)
     private String companyEmail;
 
+    @Basic
+    @Column(name = "companyType", nullable = false, length = 45)
+    private String companyType;
+
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private transient List<TradeOperation> operations;
+
+    public String getCompanyType() {
+        return companyType;
+    }
+
+    public void setCompanyType(String companyType) {
+        this.companyType = companyType;
+    }
 
     public int getCompanyId() {
         return companyId;

@@ -17,8 +17,13 @@ public class Item {
     @Column(name = "itemCost", nullable = false, precision = 0)
     private double itemCost;
 
+    @Basic
+    @Column(name = "itemType", nullable = false, length = 45)
+    private String itemType;
+
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private transient List<Order> orders;
+
 
     public int getItemId() {
         return itemId;
@@ -44,6 +49,22 @@ public class Item {
         this.itemCost = itemCost;
     }
 
+    public String getItemType() {
+        return itemType;
+    }
+
+    public void setItemType(String itemType) {
+        this.itemType = itemType;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -58,7 +79,7 @@ public class Item {
                 "itemId=" + itemId +
                 ", itemName='" + itemName + '\'' +
                 ", itemCost=" + itemCost +
-                ", orders=" + orders +
+                ", itemType='" + itemType + '\'' +
                 '}';
     }
 

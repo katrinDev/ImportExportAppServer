@@ -228,6 +228,28 @@ public class ClientHandler implements Runnable{
                         break;
                     }
 
+                    case SHOWEXPCOMPANIES:{
+                        ArrayList<Company> expCompanies = (ArrayList<Company>) companyService.findAllEntities().stream().filter(x -> x.getCompanyType().equals("export")).collect(Collectors.toList());
+                        System.out.println(expCompanies);
+                        if(expCompanies != null){
+                            response = new Response(ResponseStatus.OK, "Список компаний", new Gson().toJson(expCompanies));
+                        } else{
+                            response = new Response(ResponseStatus.ERROR, "Список компаний пуст!", "");
+                        }
+                        break;
+                    }
+                    case SHOWIMPCOMPANIES:{
+                        ArrayList<Company> impCompanies = (ArrayList<Company>) companyService.findAllEntities().stream().filter(x -> x.getCompanyType().equals("import")).collect(Collectors.toList());
+                        System.out.println(impCompanies);
+
+                        if(impCompanies != null){
+                            response = new Response(ResponseStatus.OK, "Список компаний", new Gson().toJson(impCompanies));
+                        } else{
+                            response = new Response(ResponseStatus.ERROR, "Список компаний пуст!", "");
+                        }
+                        break;
+                    }
+
                     case ADDCOMPANY: {
                         Company addCompany = gson.fromJson(request.getRequestMessage(), Company.class);
                         System.out.println("\n\n" + addCompany);
@@ -309,6 +331,27 @@ public class ClientHandler implements Runnable{
                             response = new Response(ResponseStatus.OK, "Операция успешно добавлена", gson.toJson(addOperation));
                         } else {
                             response = new Response(ResponseStatus.ERROR, "Не удалось добавить операцию!", "");
+                        }
+                        break;
+                    }
+                    case SHOWEXPITEMS:{
+                        ArrayList<Item> expItems = (ArrayList<Item>) itemService.findAllEntities().stream().filter(x -> x.getItemType().equals("export")).collect(Collectors.toList());
+                        System.out.println(expItems);
+                        if(expItems != null){
+                            response = new Response(ResponseStatus.OK, "Список товаров", new Gson().toJson(expItems));
+                        } else{
+                            response = new Response(ResponseStatus.ERROR, "Список товаров пуст!", "");
+                        }
+                        break;
+                    }
+                    case SHOWIMPITEMS:{
+                        ArrayList<Item> impItems = (ArrayList<Item>) itemService.findAllEntities().stream().filter(x -> x.getItemType().equals("import")).collect(Collectors.toList());
+                        System.out.println(impItems);
+
+                        if(impItems != null){
+                            response = new Response(ResponseStatus.OK, "Список товаров", new Gson().toJson(impItems));
+                        } else{
+                            response = new Response(ResponseStatus.ERROR, "Список товаров пуст!", "");
                         }
                         break;
                     }
