@@ -5,7 +5,7 @@
 <hibernate-configuration>
   <session-factory>
 
-        <property name="connection.url">jdbc:mysql://localhost:3306/import_export_db?useSSL=false&amp;serverTimezone=UTC</property>
+        <property name="connection.url">jdbc:mysql://localhost:3306/import_export_db</property>
         <property name="connection.username">root</property>
         <property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
 
@@ -13,10 +13,14 @@
         <property name="show_sql">true</property>
         <property name="current_session_context_class">thread</property>
 
-        <mapping class="org.project.entities.Person"/>
+      <mapping class="org.project.entities.Person"/>
         <mapping class="org.project.entities.User"/>
-        <mapping class="org.project.entities.Role"/>
         <mapping class="org.project.entities.Company"/>
+        <mapping class="org.project.entities.Role"/>
+        <mapping class="org.project.entities.Item"/>
+        <mapping class="org.project.entities.Order"/>
+      <mapping class="org.project.entities.TradeOperation"/>
+
 
   </session-factory>
 </hibernate-configuration>

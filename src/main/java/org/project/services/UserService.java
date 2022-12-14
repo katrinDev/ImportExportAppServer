@@ -15,8 +15,9 @@ public class UserService implements Service<User> {
     }
 
     @Override
-    public void saveEntity(User user) {
-        userDAO.save(user);
+    public int saveEntity(User user) {
+
+        return userDAO.save(user);
     }
 
     @Override

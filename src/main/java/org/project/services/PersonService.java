@@ -15,8 +15,9 @@ public class PersonService implements Service<Person> {
     }
 
     @Override
-    public void saveEntity(Person person) {
-        personDAO.save(person);
+    public int saveEntity(Person person) {
+
+        return personDAO.save(person);
     }
 
     @Override

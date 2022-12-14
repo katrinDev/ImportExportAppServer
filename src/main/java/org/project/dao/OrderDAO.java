@@ -2,59 +2,56 @@ package org.project.dao;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.query.Query;
-import org.project.entities.Person;
-import org.project.entities.User;
+import org.project.entities.Order;
 import org.project.interfaces.DAO;
 import org.project.utilities.HibernateSessionFactory;
 
 import java.util.List;
 
-public class PersonDAO implements DAO<Person> {
+public class OrderDAO implements DAO<Order> {
     @Override
-    public int save(Person person){
+    public int save(Order order){
         Session session = HibernateSessionFactory.getSessionFactory().openSession();
         Transaction tx = session.beginTransaction();
-        int id = (int) session.save(person);
+        int id = (int) session.save(order);
         tx.commit();
         session.close();
         return id;
-
     }
 
     @Override
-    public void update(Person person){
+    public void update(Order order){
         Session session = HibernateSessionFactory.getSessionFactory().openSession();
         Transaction tx = session.beginTransaction();
-        session.saveOrUpdate(person);
+        session.saveOrUpdate(order);
         tx.commit();
         session.close();
     }
 
     @Override
-    public void delete(Person person){
+    public void delete(Order order){
         Session session = HibernateSessionFactory.getSessionFactory().openSession();
         Transaction tx = session.beginTransaction();
-        session.delete(person);
+        session.delete(order);
         tx.commit();
         session.close();
     }
 
     @Override
-    public List<Person> findAll(){
+    public List<Order> findAll(){
         Session session = HibernateSessionFactory.getSessionFactory().openSession();
         Transaction tx = session.beginTransaction();
-        List<Person> employees = (List<Person>) session.createQuery("From Person").list();
+        List<Order> orders = (List<Order>) session.createQuery("From Order ").list();
         tx.commit();
         session.close();
-        return employees;
+        return orders;
     }
 
     @Override
-    public Person findById(int id){
+    public Order findById(int id){
         Session session = HibernateSessionFactory.getSessionFactory().openSession();
-        Person person = (Person) session.get(Person.class, id);
+        Order order = session.get(Order.class, id);
         session.close();
-        return person;
+        return order;
     }
 }

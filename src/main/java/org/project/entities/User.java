@@ -1,7 +1,11 @@
 package org.project.entities;
 
+import com.google.gson.annotations.Expose;
+
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "user")
@@ -25,15 +29,15 @@ public class User  {
     @JoinColumn(name="personID")
     private Person person;
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "userId=" + userId +
-                ", login='" + login + '\'' +
-                ", password='" + password + '\'' +
-                ", role=" + role +
-                ", person=" + person +
-                '}';
+    @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
+    private transient Set<TradeOperation> operations = new HashSet<>();
+
+    public Set<TradeOperation> getOperations() {
+        return operations;
+    }
+
+    public void setOperations(Set<TradeOperation> operations) {
+        this.operations = operations;
     }
 
     public int getUserId() {
@@ -87,5 +91,16 @@ public class User  {
     @Override
     public int hashCode() {
         return Objects.hash(userId, login, password, role, person);
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId=" + userId +
+                ", login='" + login + '\'' +
+                ", password='" + password + '\'' +
+                ", role=" + role +
+                ", person=" + person +
+                '}';
     }
 }

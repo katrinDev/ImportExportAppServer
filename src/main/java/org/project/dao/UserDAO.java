@@ -10,12 +10,13 @@ import java.util.List;
 
 public class UserDAO implements DAO<User> {
     @Override
-    public void save(User user){
+    public int save(User user){
         Session session = HibernateSessionFactory.getSessionFactory().openSession();
         Transaction tx = session.beginTransaction();
-        session.save(user);
+        int id = (int) session.save(user);
         tx.commit();
         session.close();
+        return id;
     }
 
     @Override

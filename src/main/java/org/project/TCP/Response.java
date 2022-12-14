@@ -1,6 +1,5 @@
 package org.project.TCP;
 
-import lombok.Builder;
 import org.project.enums.ResponseStatus;
 
 public class Response {

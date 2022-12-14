@@ -1,27 +1,31 @@
 package org.project.entities;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "company")
+@Table(name = "company", schema = "import_export_db")
 public class Company {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "companyID", nullable = false)
     private int companyId;
     @Basic
-    @Column(name = "companyName", nullable = true, length = 45)
+    @Column(name = "companyName", nullable = false, length = 45)
     private String companyName;
     @Basic
-    @Column(name = "country", nullable = true, length = 45)
+    @Column(name = "country", nullable = false, length = 45)
     private String country;
     @Basic
-    @Column(name = "checkingAccount", nullable = true, length = 45)
+    @Column(name = "checkingAccount", nullable = false, length = 45)
     private String checkingAccount;
     @Basic
     @Column(name = "companyEmail", nullable = true, length = 45)
     private String companyEmail;
+
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private transient List<TradeOperation> operations;
 
     public int getCompanyId() {
         return companyId;
@@ -74,5 +78,17 @@ public class Company {
     @Override
     public int hashCode() {
         return Objects.hash(companyId, companyName, country, checkingAccount, companyEmail);
+    }
+
+    @Override
+    public String toString() {
+        return "Company{" +
+                "companyId=" + companyId +
+                ", companyName='" + companyName + '\'' +
+                ", country='" + country + '\'' +
+                ", checkingAccount='" + checkingAccount + '\'' +
+                ", companyEmail='" + companyEmail + '\'' +
+                ", operations=" + operations +
+                '}';
     }
 }

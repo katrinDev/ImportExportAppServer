@@ -2,59 +2,56 @@ package org.project.dao;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.query.Query;
-import org.project.entities.Person;
-import org.project.entities.User;
+import org.project.entities.TradeOperation;
 import org.project.interfaces.DAO;
 import org.project.utilities.HibernateSessionFactory;
 
 import java.util.List;
 
-public class PersonDAO implements DAO<Person> {
+public class OperationDAO implements DAO<TradeOperation> {
     @Override
-    public int save(Person person){
+    public int save(TradeOperation operation){
         Session session = HibernateSessionFactory.getSessionFactory().openSession();
         Transaction tx = session.beginTransaction();
-        int id = (int) session.save(person);
+        int id = (int) session.save(operation);
         tx.commit();
         session.close();
         return id;
-
     }
 
     @Override
-    public void update(Person person){
+    public void update(TradeOperation operation){
         Session session = HibernateSessionFactory.getSessionFactory().openSession();
         Transaction tx = session.beginTransaction();
-        session.saveOrUpdate(person);
+        session.saveOrUpdate(operation);
         tx.commit();
         session.close();
     }
 
     @Override
-    public void delete(Person person){
+    public void delete(TradeOperation operation){
         Session session = HibernateSessionFactory.getSessionFactory().openSession();
         Transaction tx = session.beginTransaction();
-        session.delete(person);
+        session.delete(operation);
         tx.commit();
         session.close();
     }
 
     @Override
-    public List<Person> findAll(){
+    public List<TradeOperation> findAll(){
         Session session = HibernateSessionFactory.getSessionFactory().openSession();
         Transaction tx = session.beginTransaction();
-        List<Person> employees = (List<Person>) session.createQuery("From Person").list();
+        List<TradeOperation> operations = (List<TradeOperation>) session.createQuery("From TradeOperation ").list();
         tx.commit();
         session.close();
-        return employees;
+        return operations;
     }
 
     @Override
-    public Person findById(int id){
+    public TradeOperation findById(int id){
         Session session = HibernateSessionFactory.getSessionFactory().openSession();
-        Person person = (Person) session.get(Person.class, id);
+        TradeOperation operation = session.get(TradeOperation.class, id);
         session.close();
-        return person;
+        return operation;
     }
 }
